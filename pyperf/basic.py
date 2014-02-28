@@ -9,35 +9,16 @@ from .interfaces import PerfTest
 from .interfaces import TimeResults
 
 
-def _get_exec():
-    """Polyfill for Py2/Py3 'exec' compatibility.
+if sys.version_info.major > 2:
 
-    This solution brought to you by Ned Batchelder:
+    import builtins
+    _exec = getattr(builtins, 'exec')
 
-    http://nedbatchelder.com/
-        blog/200910/running_the_same_code_on_python_2x_and_3x.html
+else:
 
-    """
+    def _exec(source, global_map, local_map):
 
-    if sys.hexversion > 0x03000000:
-
-        def exec_function(source, filename, global_map):
-            """A wrapper around exec()."""
-
-            exec(compile(source, filename, "exec"), global_map)
-
-    else:
-
-        eval(
-            compile(
-                """def exec_function(source, filename, global_map):
-    exec compile(source, filename, "exec") in global_map""",
-                "<exec_function>",
-                "exec",
-            )
-        )
-
-    return exec_function
+        exec('source in global_map, local_map')
 
 
 class BasicPerfTest(PerfTest):
@@ -98,16 +79,11 @@ class BasicPerfTest(PerfTest):
 
     def memory(self):
 
-        _exec = _get_exec()
-
         def profile():
 
             def run_test():
-                _exec(
-                    source=self.setup + '\n' + self.test,
-                    filename='None',
-                    global_map=globals(),
-                )
+
+                _exec(self.setup + '\n' + self.test, globals(), locals())
 
             profile = memory_profiler.memory_usage(
                 run_test
