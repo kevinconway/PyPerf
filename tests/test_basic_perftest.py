@@ -1,7 +1,7 @@
 import unittest
 
-from pyperf.basic import BasicPerfTest
-from pyperf.interfaces import PerfTestSet
+from pyperf.profile.basic import BasicPerfTest
+from pyperf.profile.interfaces import PerfTestSet
 
 
 class TestBasicPerfTest(unittest.TestCase):
