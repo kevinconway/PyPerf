@@ -1,0 +1,11 @@
+language: python
+python:
+  - "2.7"
+  - "3.3"
+# command to install dependencies
+install:
+  - "pip install -U pep8"
+  - "pip install -U pyflakes"
+  - "pip install -U memory_profiler"
+# command to run tests
+script: "python -m unittest discover tests"
