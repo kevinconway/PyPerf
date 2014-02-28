@@ -18,7 +18,7 @@ else:
 
     def _exec(source, global_map, local_map):
 
-        exec('source in global_map, local_map')
+        exec('exec source in global_map, local_map')
 
 
 class BasicPerfTest(PerfTest):
