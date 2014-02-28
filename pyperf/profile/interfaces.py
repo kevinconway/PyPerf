@@ -103,11 +103,11 @@ class PerfTestSet(object):
         """
 
         self._setup = setup or 'pass'
+        self._perf_class = perf_class or PerfTest
         self._tests = tuple(
-            perf_class(test, self._setup)
+            self._perf_class(test, self._setup)
             for test in tests
         )
-        self._perf_class = perf_class or PerfTest
 
     @property
     def tests(self):
