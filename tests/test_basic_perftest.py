@@ -1,6 +1,7 @@
 import unittest
 
 from pyperf.basic import BasicPerfTest
+from pyperf.interfaces import PerfTestSet
 
 
 class TestBasicPerfTest(unittest.TestCase):
@@ -44,8 +45,8 @@ class TestBasicPerfTest(unittest.TestCase):
     def test_memory_behaves_resonably(self):
         """Check that obviously more consuming code is measured as bigger."""
 
-        test1 = BasicPerfTest('for x in list(range(10)): pass')
-        test2 = BasicPerfTest('for x in list(range(100000)): pass')
+        test1 = BasicPerfTest('for x in list(range(1)): pass')
+        test2 = BasicPerfTest('for x in list(range(10000)): pass')
 
         mem1 = test1.memory()
         mem2 = test2.memory()
@@ -55,10 +56,23 @@ class TestBasicPerfTest(unittest.TestCase):
     def test_profile_runs_both(self):
 
         test = BasicPerfTest('for x in list(range(10)): pass')
-        results = test()
+        results = test(samples=100)
 
         self.assertTrue(results.runtime.runtime > 0)
         self.assertTrue(results.memory.max > 0)
+
+    def test_integrates_with_perf_test_set(self):
+
+        test = PerfTestSet(
+            tests=(
+                'for x in list(range(10)): pass',
+                'for x in list(range(100)): pass',
+                'for x in list(range(10000)): pass',
+            ),
+            perf_class=BasicPerfTest,
+        )
+
+        test.time(samples=100)
 
 
 if __name__ == '__main__':
