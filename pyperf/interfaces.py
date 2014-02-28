@@ -87,7 +87,9 @@ class PerfTest(object):
 class PerfTestSet(object):
     """Interface for a collection of tests."""
 
-    def __init__(self, tests, setup=None):
+    __slots__ = ('_setup', '_tests', '_perf_class')
+
+    def __init__(self, tests, setup=None, perf_class=None):
         """Create a runnable test suite.
 
         'tests' must be an iterable of Python code segments to profile.
@@ -95,13 +97,17 @@ class PerfTestSet(object):
         'setup' is an optional segment of code to run before each test that is
         not profiled.
 
+        'perf_class' is a class that implements the PerfTest interface that
+        will be used when generating profiles.
+
         """
 
         self._setup = setup or 'pass'
         self._tests = tuple(
-            PerfTest(test, self._setup)
+            perf_class(test, self._setup)
             for test in tests
         )
+        self._perf_class = perf_class or PerfTest
 
     @property
     def tests(self):
@@ -112,7 +118,7 @@ class PerfTestSet(object):
     def time(self, samples=1000000):
         """Return an iterable of TimeResults objects."""
 
-        return tuple(test.time() for test in self._tests)
+        return tuple(test.time(samples=samples) for test in self._tests)
 
     def memory(self):
         """Return an iterable of MemoryResults objects."""
@@ -122,4 +128,4 @@ class PerfTestSet(object):
     def __call__(self, samples=1000000):
         """Return an iterable of ProfileResults objects."""
 
-        return tuple(test() for test in self._tests)
+        return tuple(test(samples=samples) for test in self._tests)
