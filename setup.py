@@ -21,5 +21,7 @@ setup(
     packages=find_packages(exclude=['tests', 'build', 'dist', 'docs']),
     install_requires=[
         'memory_profiler',
+        'falcon',
+        'jinja2',
     ]
 )
