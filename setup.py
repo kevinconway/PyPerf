@@ -9,11 +9,11 @@ with open('LICENSE') as f:
     license = f.read()
 
 setup(
-    name='pyperf-profile',
+    name='py-perf',
     version='0.0.1',
-    url='https://github.com/PyPerf/pyperf-profile',
+    url='https://github.com/rackerlabs/PyPerf',
     license=license,
-    description='Standard interface for python profilers.',
+    description='ZeroVM driven Python profiling environment.',
     author='Kevin Conway',
     author_email='kevinjacobconway@gmail.com',
     long_description=readme,
