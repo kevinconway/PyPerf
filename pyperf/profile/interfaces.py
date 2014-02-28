@@ -118,7 +118,7 @@ class PerfSampleSet(object):
     def time(self, samples=1000000):
         """Return an iterable of TimeResults objects."""
 
-        return tuple(sample.time(samples=samples) for sample in self._samples)
+        return tuple(s.time(samples=samples) for s in self._samples)
 
     def memory(self):
         """Return an iterable of MemoryResults objects."""
@@ -128,4 +128,4 @@ class PerfSampleSet(object):
     def __call__(self, samples=1000000):
         """Return an iterable of ProfileResults objects."""
 
-        return tuple(sample(samples=samples) for sample in self._samples)
+        return tuple(s(samples=samples) for s in self._samples)

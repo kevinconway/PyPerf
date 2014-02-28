@@ -8,6 +8,8 @@ class Store(object):
 
     def __init__(self, path='/tmp/sample_store.json'):
 
+        self._path = path
+
         if not os.path.exists(path):
 
             self._store = open(path, 'w+')
@@ -48,4 +50,17 @@ class Store(object):
         values.append(sample)
 
         self._store.seek(0)
+        self._store.write(json.dumps(values))
+
+
+    def remove(self, sample_id):
+
+        self._store.seek(0)
+        values = [
+            s for s in json.loads(self._store.read())
+            if s['id'] != sample_id
+        ]
+
+        self._store.close()
+        self._store = open(self._path, 'w+')
         self._store.write(json.dumps(values))
