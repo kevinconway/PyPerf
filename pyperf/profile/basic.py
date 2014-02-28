@@ -5,7 +5,7 @@ import timeit
 import memory_profiler
 
 from .interfaces import MemoryResults
-from .interfaces import PerfTest
+from .interfaces import PerfSample
 from .interfaces import TimeResults
 
 
@@ -21,10 +21,10 @@ else:
         exec('exec source in global_map, local_map')
 
 
-class BasicPerfTest(PerfTest):
+class BasicPerfSample(PerfSample):
 
     def _externalize(self, func):
-        """Run a test in another process and get the result.
+        """Run a sample in another process and get the result.
 
         This is to fix a bug related to incorrect memory values.
 
@@ -67,13 +67,13 @@ class BasicPerfTest(PerfTest):
         def profile():
 
             return (timeit.timeit(
-                stmt=self.test,
+                stmt=self.sample,
                 setup=self.setup,
                 number=samples,
             ) / samples * 1000000)
 
         return TimeResults(
-            test=self.test,
+            sample=self.sample,
             runtime=self._externalize(profile),
         )
 
@@ -81,12 +81,12 @@ class BasicPerfTest(PerfTest):
 
         def profile():
 
-            def run_test():
+            def run_sample():
 
-                _exec(self.setup + '\n' + self.test, globals(), locals())
+                _exec(self.setup + '\n' + self.sample, globals(), locals())
 
             profile = memory_profiler.memory_usage(
-                run_test
+                run_sample
             )
 
             return(
@@ -98,7 +98,7 @@ class BasicPerfTest(PerfTest):
         results = self._externalize(profile)
 
         return MemoryResults(
-            test=self.test,
+            sample=self.sample,
             min=results[0],
             avg=results[1],
             max=results[2],
