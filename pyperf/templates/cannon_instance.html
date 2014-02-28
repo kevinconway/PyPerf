@@ -33,12 +33,12 @@
             <div class="rs-inner">
               <h2 class="rs-page-title">{{ results.name }}</h2>
               {% block content %}
-                {{ results.setup }}
+                <h5> Setup: {{ results.setup }}</h5>
                 {% for item in results.samples %}
                   <li>
-                    <pre>{{ item.code }}</pre>
-                    {{ item.runtime }} ==
-                    {{ item.memory }}
+                    <pre>{{ item.source }}</pre>
+                    <h3>Runtime: {{ item.runtime }} microseconds</h3>
+                    <h3>Memory: {{ item.memory }} megabytes</h3>
                   </li>
                 {% endfor %}
               {% endblock %}
