@@ -3,36 +3,51 @@
 from collections import namedtuple
 
 
-TimeResults = namedtuple('TimeResults', ('sample', 'runtime'))
+ProfileResults = namedtuple(
+    'ProfileResults',
+    (
+        'setup',
+        'code',
+        'runtime',
+        'memory',
+    ),
+)
 
-MemoryResults = namedtuple('MemoryResults', ('sample', 'min', 'avg', 'max'))
 
-ProfileResults = namedtuple('ProfileResults', ('sample', 'runtime', 'memory'))
+MemoryResults = namedtuple(
+    'MemoryResults',
+    (
+        'min',
+        'avg',
+        'max',
+    ),
+)
 
 
-class PerfSample(object):
-    """Interface for an individual performance sample that can be run."""
+class Profile(object):
+    """A profiler for a single snippet of code."""
 
-    __slots__ = ('_sample', '_setup')
+    __slots__ = ('_code', '_setup')
 
-    def __init__(self, sample, setup=None):
-        """Create an instance of a runnable performance sample.
+    def __init__(self, code, setup=None):
+        """Create an instance of a runnable profiler.
 
-        'sample' is the source code to profile.
+        'code' is the source code to profile.
 
-        'setup' is an optional block of code to run before the sample that is
-        not a part of the measured profile.
+        'setup' is an optional block of code to run before the profiled code
+        that is not a part of the measured runtime. It may, however, count
+        against a memory profile.
 
         """
 
-        self._sample = sample
+        self._code = code
         self._setup = setup or 'pass'
 
     @property
-    def sample(self):
+    def code(self):
         """The Python code that will be profiled."""
 
-        return self._sample
+        return self._code
 
     @property
     def setup(self):
@@ -41,14 +56,14 @@ class PerfSample(object):
         return self._setup
 
     def time(self, samples=1000000):
-        """Measure the runtime of the sample.
+        """Measure the runtime of the code.
 
-        The result is a TimeResults object where the runtime is a floating
-        point number representing the number of microseconds the sample took to
-        complete. This measure is an average of multiple sample runs.
+        The result is a floating point number which represents the runtime of
+        the code in microseconds. This measure is an average of all runtimes
+        collected over all samples.
 
-        'samples' is the number of times the sample should run before averaging
-        the results. Samples with a shorter expected runtime should use higher
+        'samples' is the number of times the code should run before averaging
+        the results. Code with a shorter expected runtime should use higher
         values for 'samples'. The default is 1,000,000 which is modeled after
         the default number of samples used by the standard lib timeit module.
 
@@ -57,11 +72,11 @@ class PerfSample(object):
         raise NotImplementedError()
 
     def memory(self):
-        """Measures the memory usage of the sample.
+        """Measures the memory usage of the code.
 
-        The value returned is a MemoryResults containing the minimum, average,
-        and maximum memory consumption throughout the run. For short runs
-        these values may be the same.
+        The value returned is a MemoryResults object containing the
+        minimum, average, and maximum memory consumption throughout the run.
+        These values may be the same if the code has a short runtime.
 
         """
 
@@ -78,54 +93,59 @@ class PerfSample(object):
         """
 
         return ProfileResults(
-            sample=self._sample,
+            setup=self._setup,
+            code=self._code,
             runtime=self.time(samples=samples),
             memory=self.memory(),
         )
 
 
-class PerfSampleSet(object):
-    """Interface for a collection of samples."""
+class ProfileSet(object):
+    """Interface for a collection of profiles."""
 
-    __slots__ = ('_setup', '_samples', '_perf_class')
+    __slots__ = ('_setup', '_profiles')
 
-    def __init__(self, samples, setup=None, perf_class=None):
-        """Create a runnable sample suite.
+    ProfileClass = Profile
 
-        'samples' must be an iterable of Python code segments to profile.
+    def __init__(self, code, setup=None):
+        """Create a runnable profile suite.
+
+        'code' must be an iterable of Python code segments to profile.
 
         'setup' is an optional segment of code to run before each sample that
         is not profiled.
 
-        'perf_class' is a class that implements the PerfSample interface that
-        will be used when generating profiles.
-
         """
 
         self._setup = setup or 'pass'
-        self._perf_class = perf_class or PerfSample
-        self._samples = tuple(
-            self._perf_class(sample, self._setup)
-            for sample in samples
+        self._profiles = tuple(
+            self.ProfileClass(c, setup=self._setup)
+            for c in code
         )
 
     @property
-    def samples(self):
+    def setup(self):
+        """The setup code for each profile."""
+
+        return self._setup
+
+    @property
+    def code(self):
         """An iterable of Python code segments that will be profiled."""
 
-        return tuple(t.sample for t in self._samples)
+        return tuple(p.code for p in self._profiles)
 
     def time(self, samples=1000000):
-        """Return an iterable of TimeResults objects."""
+        """Return an iterable of time profile results."""
 
-        return tuple(s.time(samples=samples) for s in self._samples)
+        return tuple(p.time(samples=samples) for p in self._profiles)
 
     def memory(self):
         """Return an iterable of MemoryResults objects."""
 
-        return tuple(sample.memory() for sample in self._samples)
+        return tuple(p.memory() for p in self._profiles)
 
     def __call__(self, samples=1000000):
         """Return an iterable of ProfileResults objects."""
 
-        return tuple(s(samples=samples) for s in self._samples)
+        return tuple(p(samples=samples) for p in self._profiles)
