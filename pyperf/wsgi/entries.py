@@ -34,7 +34,7 @@ class EntryCollection(DbResource):
 
             raise falcon.HTTPError(
                 falcon.HTTP_400,
-               'Malformed JSON.',
+                'Malformed JSON.',
             )
 
         try:
@@ -56,7 +56,7 @@ class EntryCollection(DbResource):
 
             raise falcon.HTTPError(
                 falcon.HTTP_400,
-               'Invalid input.',
+                'Invalid input.',
             )
 
         session = self.Session()
@@ -65,6 +65,7 @@ class EntryCollection(DbResource):
 
         resp.status = falcon.HTTP_201
         resp.body = json.dumps({"id": entry.identity})
+
 
 class EntryInstance(DbResource):
 
