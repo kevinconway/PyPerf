@@ -1,3 +1,5 @@
+"""Profile implementations using standard lib and pure Python libraries."""
+
 import multiprocessing
 import sys
 import timeit
@@ -5,10 +7,12 @@ import timeit
 import memory_profiler
 
 from .interfaces import MemoryResults
-from .interfaces import PerfSample
-from .interfaces import TimeResults
+from .interfaces import Profile
+from .interfaces import ProfileSet
 
 
+# The exec interface changes between Python version 2 and 3. This is a simple
+# shim which adds cross-platform execing.
 if sys.version_info.major > 2:
 
     import builtins
@@ -21,10 +25,13 @@ else:
         exec('exec source in global_map, local_map')
 
 
-class BasicPerfSample(PerfSample):
+class BasicProfile(Profile):
+    """A profiler which uses timeit and memory_profiler."""
+
+    __slots__ = ()
 
     def _externalize(self, func):
-        """Run a sample in another process and get the result.
+        """Run a function in another process and get the result.
 
         This is to fix a bug related to incorrect memory values.
 
@@ -49,7 +56,7 @@ class BasicPerfSample(PerfSample):
 
             except Exception as exc:
 
-                child.send((True, str(exc)))
+                child.send((True, exc))
 
         proc = multiprocessing.Process(target=run_profile, args=(child,))
         proc.start()
@@ -58,48 +65,52 @@ class BasicPerfSample(PerfSample):
 
         if excepted is True:
 
-            raise Exception(value)
+            raise value
 
         return value
 
     def time(self, samples=1000000):
+        """Get the timeit results."""
 
-        def profile():
+        def measure_time():
 
             return (timeit.timeit(
-                stmt=self.sample,
+                stmt=self.code,
                 setup=self.setup,
                 number=samples,
             ) / samples * 1000000)
 
-        return TimeResults(
-            sample=self.sample,
-            runtime=self._externalize(profile),
-        )
+        return self._externalize(measure_time)
 
     def memory(self):
+        """Get the memory_profiler results."""
 
-        def profile():
+        def measure_memory():
 
-            def run_sample():
+            def run_code():
 
-                _exec(self.setup + '\n' + self.sample, globals(), locals())
+                _exec(self.setup + '\n' + self.code, globals(), locals())
 
-            profile = memory_profiler.memory_usage(
-                run_sample
+            results = memory_profiler.memory_usage(
+                run_code,
             )
 
             return(
-                min(profile),
-                sum(profile) / len(profile),
-                max(profile),
+                min(results),
+                sum(results) / len(results),
+                max(results),
             )
 
-        results = self._externalize(profile)
+        results = self._externalize(measure_memory)
 
         return MemoryResults(
-            sample=self.sample,
             min=results[0],
             avg=results[1],
             max=results[2],
         )
+
+
+class BasicProfileSet(ProfileSet):
+    """ProfileSet that uses the BasicProfile."""
+
+    ProfileClass = BasicProfile
