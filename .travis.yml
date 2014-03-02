@@ -7,5 +7,10 @@ install:
   - "pip install -U pep8"
   - "pip install -U pyflakes"
   - "pip install -U memory_profiler"
+  - "pip install -U falcon"
+  - "pip install -U sqlalchemy"
 # command to run tests
-script: "python -m unittest discover tests"
+script:
+    - "python -m unittest discover tests"
+    - "pep8 pyperf/"
+    - "pyflakes pyperf/"
