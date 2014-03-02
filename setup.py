@@ -13,7 +13,7 @@ setup(
     version='0.0.1',
     url='https://github.com/rackerlabs/PyPerf',
     license=license,
-    description='ZeroVM driven Python profiling environment.',
+    description='REST API for profiling Python snippets.',
     author='Kevin Conway',
     author_email='kevinjacobconway@gmail.com',
     long_description=readme,
@@ -22,6 +22,6 @@ setup(
     install_requires=[
         'memory_profiler',
         'falcon',
-        'jinja2',
+        'sqlalchemy',
     ]
 )

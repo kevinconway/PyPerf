@@ -1,13 +1,24 @@
 import falcon
 
-from .samples import SampleCollection
-from .samples import SampleInstance
-from .ui import Index
-from .ui import InstanceView
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 
-app = falcon.API()
+from pyperf.models import Base
+from pyperf.wsgi.entries import EntryCollection
+from pyperf.wsgi.entries import EntryInstance
 
-app.add_route('/', Index())
-app.add_route('/{sample_id}', InstanceView())
-app.add_route('/samples', SampleCollection())
-app.add_route('/samples/{sample_id}', SampleInstance())
+
+def make_app(db_engine=None):
+
+    Session = sessionmaker()
+    engine = db_engine or create_engine('sqlite://')
+    Session.configure(bind=engine)
+
+    Base.metadata.create_all(engine)
+
+    app = falcon.API()
+
+    app.add_route('/entries', EntryCollection(Session))
+    app.add_route('/entries/{entry_slug}', EntryInstance(Session))
+
+    return app
