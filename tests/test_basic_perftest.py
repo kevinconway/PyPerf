@@ -1,10 +1,10 @@
 import unittest
 
-from pyperf.profile.basic import BasicPerfTest
-from pyperf.profile.interfaces import PerfTestSet
+from pyperf.profile.basic import BasicPerfSample
+from pyperf.profile.interfaces import PerfSampleSet
 
 
-class TestBasicPerfTest(unittest.TestCase):
+class TestBasicPerfSample(unittest.TestCase):
 
     def test_externalize_runs_somewhere_else(self):
 
@@ -15,7 +15,7 @@ class TestBasicPerfTest(unittest.TestCase):
             global success
             success = False
 
-        test = BasicPerfTest('', '')
+        test = BasicPerfSample('', '')
         test._externalize(toggle)
         self.assertTrue(success)
 
@@ -26,7 +26,7 @@ class TestBasicPerfTest(unittest.TestCase):
 
             raise Exception()
 
-        test = BasicPerfTest('','')
+        test = BasicPerfSample('','')
         with self.assertRaises(Exception):
 
             test._externalize(fail)
@@ -34,8 +34,8 @@ class TestBasicPerfTest(unittest.TestCase):
     def test_time_behaves_reasonably(self):
         """Check that obviously longer code is measured as longer running."""
 
-        test1 = BasicPerfTest('for x in range(10): pass')
-        test2 = BasicPerfTest('for x in range(10000): pass')
+        test1 = BasicPerfSample('for x in range(10): pass')
+        test2 = BasicPerfSample('for x in range(10000): pass')
 
         time1 = test1.time(samples=100)
         time2 = test2.time(samples=100)
@@ -45,8 +45,8 @@ class TestBasicPerfTest(unittest.TestCase):
     def test_memory_behaves_resonably(self):
         """Check that obviously more consuming code is measured as bigger."""
 
-        test1 = BasicPerfTest('for x in list(range(1)): pass')
-        test2 = BasicPerfTest('for x in list(range(10000)): pass')
+        test1 = BasicPerfSample('for x in list(range(1)): pass')
+        test2 = BasicPerfSample('for x in list(range(10000)): pass')
 
         mem1 = test1.memory()
         mem2 = test2.memory()
@@ -55,7 +55,7 @@ class TestBasicPerfTest(unittest.TestCase):
 
     def test_profile_runs_both(self):
 
-        test = BasicPerfTest('for x in list(range(10)): pass')
+        test = BasicPerfSample('for x in list(range(10)): pass')
         results = test(samples=100)
 
         self.assertTrue(results.runtime.runtime > 0)
@@ -63,13 +63,13 @@ class TestBasicPerfTest(unittest.TestCase):
 
     def test_integrates_with_perf_test_set(self):
 
-        test = PerfTestSet(
-            tests=(
+        test = PerfSampleSet(
+            samples=(
                 'for x in list(range(10)): pass',
                 'for x in list(range(100)): pass',
                 'for x in list(range(10000)): pass',
             ),
-            perf_class=BasicPerfTest,
+            perf_class=BasicPerfSample,
         )
 
         test.time(samples=100)
