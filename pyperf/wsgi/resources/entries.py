@@ -2,8 +2,8 @@ import json
 
 import falcon
 
-from ..models import Entry
-from ..models import Snippet
+from ...models import Entry
+from ...models import Snippet
 
 from .base import DbResource
 
