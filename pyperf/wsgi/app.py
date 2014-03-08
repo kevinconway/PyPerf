@@ -3,9 +3,9 @@ import falcon
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from pyperf.models import Base
-from pyperf.wsgi.entries import EntryCollection
-from pyperf.wsgi.entries import EntryInstance
+from ..models import Base
+from .resources.entries import EntryCollection
+from .resources.entries import EntryInstance
 
 
 def make_app(db_engine=None):
