@@ -23,5 +23,6 @@ setup(
         'memory_profiler',
         'falcon',
         'sqlalchemy',
+        'amqp',
     ]
 )
