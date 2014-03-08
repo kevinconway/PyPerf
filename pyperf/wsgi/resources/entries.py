@@ -5,10 +5,10 @@ import falcon
 from ...models import Entry
 from ...models import Snippet
 
-from .base import DbResource
+from .base import BaseResource
 
 
-class EntryCollection(DbResource):
+class EntryCollection(BaseResource):
 
     def on_get(self, req, resp):
         """List all current entry identities."""
@@ -67,7 +67,7 @@ class EntryCollection(DbResource):
         resp.body = json.dumps({"id": entry.identity})
 
 
-class EntryInstance(DbResource):
+class EntryInstance(BaseResource):
 
     def on_get(self, req, resp, entry_slug):
         """Get details of an entry."""
