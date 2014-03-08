@@ -2,15 +2,23 @@ language: python
 python:
   - "2.7"
   - "3.3"
-# command to install dependencies
+# Commands to install dependencies.
 install:
   - "pip install -U pep8"
   - "pip install -U pyflakes"
   - "pip install -U memory_profiler"
   - "pip install -U falcon"
   - "pip install -U sqlalchemy"
-# command to run tests
+  - "pip install -U amqp"
+# External resources required
+resources:
+    - rabbitmq
+before_script:
+    - "sudo service rabbitmq-server restart"
+# Commands to run tests.
 script:
-    - "python -m unittest discover tests"
+    - "./run_tests.sh profile"
+    - "./run_tests.sh wsgi"
+    - "./run_tests.sh transport-amqp"
     - "pep8 pyperf/"
     - "pyflakes pyperf/"

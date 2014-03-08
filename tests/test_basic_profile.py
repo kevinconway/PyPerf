@@ -67,9 +67,9 @@ class TestBasicProfile(unittest.TestCase):
 
         test = BasicProfileSet(
             code=(
-                'for x in list(range(10)): pass',
                 'for x in list(range(100)): pass',
-                'for x in list(range(10000)): pass',
+                'for x in list(range(1000)): pass',
+                'for x in list(range(100000)): pass',
             ),
         )
 
