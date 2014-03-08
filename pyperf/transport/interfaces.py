@@ -39,6 +39,7 @@ class Transport(object):
         if message_type == 'profile_request':
 
             return ProfileRequest(
+                identity=payload['identity'],
                 setup=payload['setup'],
                 code=payload['code'],
             )
