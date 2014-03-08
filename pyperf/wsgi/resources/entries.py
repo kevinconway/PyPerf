@@ -4,6 +4,7 @@ import falcon
 
 from ...models import Entry
 from ...models import Snippet
+from ...transport.messages import ProfileRequest
 
 from .base import BaseResource
 
@@ -62,6 +63,16 @@ class EntryCollection(BaseResource):
         session = self.Session()
         session.add(entry)
         session.commit()
+
+        for snippet in entry.snippets:
+
+            self.transport.send(
+                ProfileRequest(
+                    snippet.identity,
+                    entry.setup,
+                    snippet.code,
+                )
+            )
 
         resp.status = falcon.HTTP_201
         resp.body = json.dumps({"id": entry.identity})
