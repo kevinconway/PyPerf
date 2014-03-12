@@ -24,5 +24,6 @@ setup(
         'falcon',
         'sqlalchemy',
         'amqp',
+        'daemons',
     ]
 )
