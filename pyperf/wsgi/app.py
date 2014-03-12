@@ -8,7 +8,11 @@ from .resources.entries import EntryCollection
 from .resources.entries import EntryInstance
 
 
-def make_app(db_engine=None):
+def make_app(db_engine=None, transport=None):
+
+    if transport is None:
+
+        raise ValueError('The transport cannot be None.')
 
     Session = sessionmaker()
     engine = db_engine or create_engine('sqlite://')
@@ -18,7 +22,7 @@ def make_app(db_engine=None):
 
     app = falcon.API()
 
-    app.add_route('/entries', EntryCollection(Session))
-    app.add_route('/entries/{entry_slug}', EntryInstance(Session))
+    app.add_route('/entries', EntryCollection(Session, transport))
+    app.add_route('/entries/{entry_slug}', EntryInstance(Session, transport))
 
     return app

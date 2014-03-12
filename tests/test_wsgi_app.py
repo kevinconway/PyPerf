@@ -7,11 +7,30 @@ from falcon.testing.srmock import StartResponseMock
 from pyperf.wsgi.app import make_app
 
 
+class FakeTransport(object):
+
+    def send(self, message):
+
+        pass
+
+    def fetch(self):
+
+        pass
+
+    def complete(self, message):
+
+        pass
+
+    def close(self):
+
+        pass
+
+
 class TestBasicProfile(unittest.TestCase):
 
     def setUp(self):
 
-        self.app = make_app()
+        self.app = make_app(transport=FakeTransport())
 
     def test_can_list_all_entries(self):
 

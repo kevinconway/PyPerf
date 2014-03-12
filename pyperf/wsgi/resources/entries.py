@@ -4,11 +4,12 @@ import falcon
 
 from ...models import Entry
 from ...models import Snippet
+from ...transport.messages import ProfileRequest
 
-from .base import DbResource
+from .base import BaseResource
 
 
-class EntryCollection(DbResource):
+class EntryCollection(BaseResource):
 
     def on_get(self, req, resp):
         """List all current entry identities."""
@@ -63,11 +64,21 @@ class EntryCollection(DbResource):
         session.add(entry)
         session.commit()
 
+        for snippet in entry.snippets:
+
+            self.transport.send(
+                ProfileRequest(
+                    snippet.identity,
+                    entry.setup,
+                    snippet.code,
+                )
+            )
+
         resp.status = falcon.HTTP_201
         resp.body = json.dumps({"id": entry.identity})
 
 
-class EntryInstance(DbResource):
+class EntryInstance(BaseResource):
 
     def on_get(self, req, resp, entry_slug):
         """Get details of an entry."""

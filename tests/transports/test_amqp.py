@@ -36,7 +36,7 @@ class TestAmqpTransport(unittest.TestCase):
             queue=self._test_id,
         )
 
-        message = ProfileRequest(secret, secret)
+        message = ProfileRequest(0, secret, secret)
         trans.send(message)
 
         # Use the raw client to fetch to message.
@@ -55,7 +55,7 @@ class TestAmqpTransport(unittest.TestCase):
         secret = str(uuid.uuid4())
 
         raw_message = amqp.Message(
-            ProfileRequest(secret, secret).json(),
+            ProfileRequest(0, secret, secret).json(),
             content_type='application/json',
         )
         self._channel.basic_publish(raw_message, routing_key=self._test_id)
@@ -99,7 +99,7 @@ class TestAmqpTransport(unittest.TestCase):
     def test_can_ack_messages(self):
 
         raw_message = amqp.Message(
-            ProfileRequest('', '').json(),
+            ProfileRequest(0, '', '').json(),
             content_type='application/json',
         )
         self._channel.basic_publish(raw_message, routing_key=self._test_id)
