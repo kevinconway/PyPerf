@@ -26,7 +26,7 @@ class FakeTransport(object):
         pass
 
 
-class TestBasicProfile(unittest.TestCase):
+class TestWsgiApp(unittest.TestCase):
 
     def setUp(self):
 
@@ -141,3 +141,41 @@ class TestBasicProfile(unittest.TestCase):
 
         for snip1, snip2 in zip(payload['snippets'], result2['snippets']):
             self.assertTrue(snip1 == snip2)
+
+    def test_results_can_be_retrieved(self):
+
+        payload = {
+            "name": "test has results",
+            "setup": "pass",
+            "snippets": ("pass", "pass")
+        }
+
+        start_response = StartResponseMock()
+        result = self.app(
+            create_environ(
+                path='/entries',
+                method='POST',
+                body=json.dumps(payload),
+            ),
+            start_response,
+        )[0].decode()
+        result = json.loads(result)
+
+        start_response2 = StartResponseMock()
+        result2 = self.app(
+            create_environ(
+                path='/entries/{0}/results'.format(result['id']),
+            ),
+            start_response2,
+        )[0].decode()
+        result2 = json.loads(result2)
+
+        self.assertTrue(start_response2.status != '404 Not Found')
+        self.assertTrue(start_response2.status != '500 Internal Server Error')
+
+        for snippet in result2['snippets']:
+
+            self.assertTrue(snippet['runtime'] is None)
+            self.assertTrue(snippet['memory']['max'] is None)
+            self.assertTrue(snippet['memory']['avg'] is None)
+            self.assertTrue(snippet['memory']['min'] is None)

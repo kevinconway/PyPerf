@@ -6,6 +6,7 @@ from sqlalchemy.orm import sessionmaker
 from ..models import Base
 from .resources.entries import EntryCollection
 from .resources.entries import EntryInstance
+from .resources.results import ResultCollection
 
 
 def make_app(db_engine=None, transport=None):
@@ -24,5 +25,9 @@ def make_app(db_engine=None, transport=None):
 
     app.add_route('/entries', EntryCollection(Session, transport))
     app.add_route('/entries/{entry_slug}', EntryInstance(Session, transport))
+    app.add_route(
+        '/entries/{entry_slug}/results',
+        ResultCollection(Session, transport),
+    )
 
     return app

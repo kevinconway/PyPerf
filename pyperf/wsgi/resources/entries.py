@@ -93,6 +93,8 @@ class EntryInstance(BaseResource):
             resp.status = falcon.HTTP_404
             resp.body = "Entry not found."
 
+            return
+
         resp.body = json.dumps(
             {
                 "id": result.identity,
