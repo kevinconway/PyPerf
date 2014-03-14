@@ -6,7 +6,7 @@ from pyperf.transport.amq import AmqpTransport
 from pyperf.wsgi.app import make_app
 
 
-engine = create_engine('sqlite://')
+engine = create_engine('sqlite:////tmp/perf.db')
 transport = AmqpTransport(
     host='localhost',
     username='guest',

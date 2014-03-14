@@ -1,5 +1,7 @@
 from daemons.message import MessageDaemon
 
+from sqlalchemy.orm import sessionmaker
+
 from ..models import Result
 from ..transport.messages import Message
 from ..transport.messages import ProfileRequest
@@ -11,7 +13,9 @@ class Executor(MessageDaemon):
 
         self._transport = kwargs.pop('transport')
         self._samples = kwargs.pop('samples')
-        self._Session = kwargs.pop('Session')
+        engine = kwargs.pop('engine')
+        self._Session = sessionmaker()
+        self._Session.configure(bind=engine)
 
         super(Executor, self).__init__(*args, **kwargs)
 

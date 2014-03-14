@@ -2,7 +2,6 @@ import logging
 import sys
 
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
 
 from pyperf.executor.host import HostExecutor
 from pyperf.transport.amq import AmqpTransport
@@ -17,9 +16,7 @@ LOG_FILE = '/tmp/host-executor.log'
 PID_FILE = '/tmp/host-executor.pid'
 
 
-engine = create_engine('sqlite://')
-Session = sessionmaker()
-Session.configure(engine=engine)
+engine = create_engine('sqlite:////tmp/perf.db')
 transport = AmqpTransport(
     host=AMQP_HOST,
     username=AMQP_USER,
@@ -34,7 +31,7 @@ if __name__ == '__main__':
     d = HostExecutor(
         pidfile=PID_FILE,
         transport=transport,
-        Session=Session,
+        engine=engine,
         samples=1,
     )
 
