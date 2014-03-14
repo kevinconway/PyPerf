@@ -44,9 +44,9 @@ class TestHostExecutor(unittest.TestCase):
     def setUp(self):
 
         self._Session = sessionmaker()
-        engine = create_engine('sqlite://')
-        self._Session.configure(bind=engine)
-        Base.metadata.create_all(engine)
+        self._engine = create_engine('sqlite://')
+        self._Session.configure(bind=self._engine)
+        Base.metadata.create_all(self._engine)
 
         self._transport = FakeTransport()
 
@@ -66,7 +66,7 @@ class TestHostExecutor(unittest.TestCase):
             '/tmp/' + random,
             transport=self._transport,
             samples=1,
-            Session=self._Session,
+            engine=self._engine,
         )
 
     def _make_snippet(self):
