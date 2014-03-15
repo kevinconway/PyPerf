@@ -1,13 +1,16 @@
+"""Daemon process that handles profile requests."""
+
 from daemons.message import MessageDaemon
 
 from sqlalchemy.orm import sessionmaker
 
-from ..models import Result
-from ..transport.messages import Message
-from ..transport.messages import ProfileRequest
+from .models import Result
+from .transport.messages import Message
+from .transport.messages import ProfileRequest
 
 
 class Executor(MessageDaemon):
+    """A generic service that listens on a transport and runs profiles."""
 
     def __init__(self, *args, **kwargs):
 
@@ -16,6 +19,7 @@ class Executor(MessageDaemon):
         engine = kwargs.pop('engine')
         self._Session = sessionmaker()
         self._Session.configure(bind=engine)
+        self._Profiler = kwargs.pop('Profiler')
 
         super(Executor, self).__init__(*args, **kwargs)
 
@@ -68,4 +72,8 @@ class Executor(MessageDaemon):
     def handle_profile_request(self, message):
         """Profile code and return a ProfileResults."""
 
-        raise NotImplementedError()
+        profile = self._Profiler(
+            setup=message.setup,
+            code=message.code,
+        )
+        return profile(samples=self._samples)

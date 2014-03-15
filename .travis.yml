@@ -21,6 +21,6 @@ script:
     - "./run_tests.sh profile"
     - "./run_tests.sh wsgi"
     - "./run_tests.sh transport-amqp"
-    - "./run_tests.sh executor-host"
+    - "./run_tests.sh executor"
     - "pep8 pyperf/"
     - "pyflakes pyperf/"
