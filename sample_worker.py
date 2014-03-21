@@ -3,7 +3,8 @@ import sys
 
 from sqlalchemy import create_engine
 
-from pyperf.executor.host import HostExecutor
+from pyperf.executor import Executor
+from pyperf.profile.basic import BasicProfile
 from pyperf.transport.amq import AmqpTransport
 
 
@@ -28,11 +29,12 @@ transport = AmqpTransport(
 if __name__ == '__main__':
 
     logging.basicConfig(filename=LOG_FILE, level=logging.DEBUG)
-    d = HostExecutor(
+    d = Executor(
         pidfile=PID_FILE,
         transport=transport,
         engine=engine,
         samples=1,
+        Profiler=BasicProfile,
     )
 
     action = sys.argv[1]

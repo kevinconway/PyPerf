@@ -5,12 +5,13 @@ import uuid
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from pyperf.executor.host import HostExecutor
+from pyperf.executor import Executor
 from pyperf.models import Base
 from pyperf.models import Entry
 from pyperf.models import Snippet
 from pyperf.models import Result
 from pyperf.profile.interfaces import ProfileResults
+from pyperf.profile.basic import BasicProfile
 from pyperf.transport.interfaces import Transport
 from pyperf.transport.messages import ProfileRequest
 
@@ -62,11 +63,12 @@ class TestHostExecutor(unittest.TestCase):
     def _make_executor(self):
 
         random = str(uuid.uuid4())
-        return HostExecutor(
+        return Executor(
             '/tmp/' + random,
             transport=self._transport,
             samples=1,
             engine=self._engine,
+            Profiler=BasicProfile,
         )
 
     def _make_snippet(self):

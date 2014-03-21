@@ -29,7 +29,7 @@ Groups:
   wsgi:               API tests.
   transport:          All transport tests (requires all tranport services).
   transport-amqp:     AMQP transport tests (requires ampq and guest account).
-  executor-host:      Direct host code executor tests.
+  executor:           Run the Executor tests.
 BLOCK
 
         exit 1
@@ -60,9 +60,9 @@ BLOCK
         run_test "test_amqp.py" "tests/transports"
         shift;;
 
-      executor-host)
+      executor)
 
-        run_test "test_host.py" "tests/executors"
+        run_test "test_executor.py"
         shift;;
 
       *)
