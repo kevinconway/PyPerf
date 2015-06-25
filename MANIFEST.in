@@ -1,0 +1,7 @@
+include README.rst
+include requirements.txt
+include LICENSE
+recursive-include pyperf *
+recursive-exclude pyperf *.pyc
+recursive-exclude pyperf *.pyd
+recursive-exclude pyperf *.pyo
