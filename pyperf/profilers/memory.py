@@ -18,10 +18,14 @@ class BaseMemoryProfiler(base.SubprocessProfiler):
 
     """Base memory profiler using memory_profiler."""
 
-    aggregate = lambda results: results[-1]
+    @classmethod
+    def aggregate(cls, results):
+        """Return the last results."""
+        return results[-1]
 
     @property
     def baseline(self):
+        """Get the memory usage of the process without running code."""
         results = self.delegate(
             functools.partial(
                 memory_profiler.memory_usage,
@@ -59,4 +63,7 @@ class AvgMemoryProfiler(BaseMemoryProfiler):
 
     """Memory profiler that returns the average measured memory usage."""
 
-    aggreagate = lambda results: sum(results) / len(results)
+    @classmethod
+    def aggreagate(cls, results):
+        """Get the average of the results."""
+        return sum(results) / len(results)
