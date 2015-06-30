@@ -20,11 +20,10 @@ setup(
     classifiers=[],
     packages=find_packages(exclude=['tests', 'build', 'dist', 'docs']),
     install_requires=[
+        'psutil',
         'memory_profiler',
-        'falcon',
-        'sqlalchemy',
-        'amqp',
         'daemons',
+        'six',
     ],
     include_package_data=True,
     zip_safe=False,

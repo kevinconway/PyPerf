@@ -1,5 +1,6 @@
 SQLAlchemy==1.0.5
 daemons==1.2.1
 falcon==0.3.0
+psutil==3.0.1
 memory-profiler==0.33
 six==1.9.0
