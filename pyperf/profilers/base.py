@@ -49,13 +49,9 @@ class BaseProfiler(profiler.Profiler):
                 value of the profile and the unit in which the profile is
                 measured.
         """
-        return self.delegate(
-            functools.partial(
-                self.profile,
-                setup=setup,
-                code=code,
-            )
-        )
+        func = functools.partial(self.profile, setup=setup, code=code)
+        functools.update_wrapper(func, self.profile)
+        return self.delegate(func)
 
 
 def pipe_wrapper(func, child):

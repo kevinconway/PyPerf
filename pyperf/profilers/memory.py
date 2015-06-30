@@ -26,12 +26,12 @@ class BaseMemoryProfiler(base.SubprocessProfiler):
     @property
     def baseline(self):
         """Get the memory usage of the process without running code."""
-        results = self.delegate(
-            functools.partial(
-                memory_profiler.memory_usage,
-                (six.exec_, ('pass', globals(), locals()), {}),
-            ),
+        func = functools.partial(
+            memory_profiler.memory_usage,
+            (six.exec_, ('pass', globals(), locals()), {}),
         )
+        functools.update_wrapper(func, memory_profiler.memory_usage)
+        results = self.delegate(func)
         return sum(results) / len(results)
 
     def profile(self, setup, code):
