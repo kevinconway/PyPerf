@@ -24,6 +24,8 @@ setup(
         'memory_profiler',
         'daemons',
         'six',
+        'amqp',
+        'stevedore',
     ],
     include_package_data=True,
     zip_safe=False,
