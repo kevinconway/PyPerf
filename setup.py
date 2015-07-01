@@ -33,6 +33,9 @@ setup(
             "profile_response = pyperf.messages:ProfileResponse",
             "profile_failure = pyperf.messages:ProfileFailure",
         ],
+        "pyperf_transports": [
+            "amqp = pyperf.transports.amqp:AmqpTransport",
+        ],
     },
     include_package_data=True,
     zip_safe=False,
