@@ -27,6 +27,13 @@ setup(
         'amqp',
         'stevedore',
     ],
+    entry_points={
+        "pyperf_messages": [
+            "profile_request = pyperf.messages:ProfileRequest",
+            "profile_response = pyperf.messages:ProfileResponse",
+            "profile_failure = pyperf.messages:ProfileFailure",
+        ],
+    },
     include_package_data=True,
     zip_safe=False,
 )
