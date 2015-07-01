@@ -7,6 +7,8 @@ from __future__ import unicode_literals
 
 import timeit
 
+import confpy.api
+
 from ..interfaces import profiler
 from . import base
 
@@ -28,3 +30,19 @@ class RuntimeProfiler(base.SubprocessProfiler):
             ),
             unit='seconds',
         )
+
+
+confpy.api.Configuration(
+    runtime=confpy.api.Namespace(
+        description="Options for the runtime profiler.",
+        times=confpy.api.IntegerOption(
+            description="Number of times to run a snippet of code.",
+            default=1000,
+        )
+    ),
+)
+
+
+def runtime_profiler_driver(config):
+    """Driver interface for the RuntimeProfiler."""
+    return RuntimeProfiler(times=config.runtime.times)
