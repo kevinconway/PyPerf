@@ -36,6 +36,12 @@ setup(
         "pyperf_transports": [
             "amqp = pyperf.transports.amqp:AmqpTransport",
         ],
+        "pyperf_profilers": [
+            "runtime = pyperf.profilers.runtime:RuntimeProfiler",
+            "memory_max = pyperf.profilers.memory:MaxMemoryProfiler",
+            "memory_min = pyperf.profilers.memory:MinMemoryProfiler",
+            "memory_avg = pyperf.profilers.memory:AvgMemoryProfiler",
+        ],
     },
     include_package_data=True,
     zip_safe=False,
