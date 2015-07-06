@@ -33,7 +33,7 @@ class AmqpTransport(transport.Transport):
     def send(self, message):
         """Send a single message over the transport."""
         msg = amqp.Message(
-            message.json,
+            json.dumps(message.json),
             content_type='application/json',
         )
         self._channel.basic_publish(msg, routing_key=self._queue)
@@ -51,7 +51,6 @@ class AmqpTransport(transport.Transport):
         """Mark a message as complete on the transport."""
         payload = self._message_map.pop(message)
         self._channel.basic_ack(payload.delivery_tag)
-        del self._message_map[message]
 
     def close(self):
         """Close the AMQP connection."""
