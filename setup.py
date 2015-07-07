@@ -31,9 +31,15 @@ setup(
     entry_points={
         "pyperf_messages": [
             "profile_request = pyperf.messages:ProfileRequest",
-            "profile_response = pyperf.messages:ProfileResponse",
+            "profile_result = pyperf.messages:ProfileResult",
             "profile_failure = pyperf.messages:ProfileFailure",
         ],
+        "console_scripts": [
+            "pyperf-profile = pyperf.cmd.daemons:profiler_main",
+            "pyperf-profile-send = pyperf.cmd.daemons:send_request",
+            "pyperf-profile-fetch = pyperf.cmd.daemons:fetch_result",
+            "pyperf-profile-err = pyperf.cmd.daemons:fetch_error",
+        ]
     },
     include_package_data=True,
     zip_safe=False,

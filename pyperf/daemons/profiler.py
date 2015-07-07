@@ -16,19 +16,42 @@ class ProfilerDaemon(base.BaseDaemon):
     def __init__(self, *args, **kwargs):
         """Initialize the daemon with a profiler."""
         self._profile = kwargs.pop('profiler')
-        super(ProfileDaemon, self).__init__(*args, **kwargs)
+        super(ProfilerDaemon, self).__init__(*args, **kwargs)
+
+    def handle_success(self, message, value, unit):
+        """Send a completed profile result."""
+        self._results.send(
+            messages.ProfileResult(
+                identifier=message.identifier,
+                setup=message.setup,
+                code=message.code,
+                value=value,
+                unit=unit,
+            ),
+        )
+
+    def handle_failure(self, message, error):
+        """Send an error generated during a profile."""
+        self._error.send(
+            messages.ProfileFailure(
+                identifier=message.identifier,
+                setup=message.setup,
+                code=message.code,
+                message=error,
+            ),
+        )
 
     def handle_message(self, message):
         """Profile code a ship the results."""
         if message.message_type != messages.ProfileRequest.message_type:
 
-            self._error.send(
-                messages.ProfileFailure(
+            self.handle_failure(
+                message.ProfileRequest(
                     identifier=message.identifier,
                     setup=None,
                     code=None,
-                    message='Invalid profile request.',
                 ),
+                'Invalid profile request.',
             )
             self._source.complete(message)
             return None
@@ -42,25 +65,10 @@ class ProfilerDaemon(base.BaseDaemon):
 
         except Exception as exc:
 
-            self._error.send(
-                messages.ProfileFailure(
-                    identifier=message.identifier,
-                    setup=message.setup,
-                    code=message.code,
-                    message=str(exc),
-                ),
-            )
+            self.handle_failure(message, str(exc))
             self._source.complete(message)
             return None
 
-        self._results.send(
-            message.ProfileResult(
-                identifier=message.identifier,
-                setup=message.setup,
-                code=message.code,
-                value=value,
-                unit=unit,
-            ),
-        )
+        self.handle_success(message, value, unit)
         self._source.complete(message)
         return None

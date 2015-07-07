@@ -24,9 +24,12 @@ class BaseDaemon(
 
     def __init__(self, *args, **kwargs):
         """Initialize the daemon with a transport."""
-        self._source = kwargs.pop('source_transport')
-        self._error = kwargs.pop('error_transport')
-        self._results = kwargs.pop('results_transport')
+        self._source_provider = kwargs.pop('source_transport')
+        self._error_provider = kwargs.pop('error_transport')
+        self._results_provider = kwargs.pop('results_transport')
+        self._source = self._source_provider()
+        self._error = self._error_provider()
+        self._results = self._results_provider()
         super(BaseDaemon, self).__init__(*args, **kwargs)
 
     def dispatch(self, message):
