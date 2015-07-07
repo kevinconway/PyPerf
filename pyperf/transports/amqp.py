@@ -8,7 +8,6 @@ from __future__ import unicode_literals
 import json
 
 import amqp
-import confpy.api
 
 from ..interfaces import transport
 from .. import messages
@@ -55,32 +54,3 @@ class AmqpTransport(transport.Transport):
     def close(self):
         """Close the AMQP connection."""
         self._connection.close()
-
-
-confpy.api.Configuration(
-    amqp=confpy.api.Namespace(
-        description="AMQP transport configuration options.",
-        host=confpy.api.StringOption(
-            description="The hostname of the AMQP endpoint.",
-        ),
-        username=confpy.api.StringOption(
-            description="The username to use when authenticating.",
-        ),
-        password=confpy.api.StringOption(
-            description="The password to use when authenticating.",
-        ),
-        queue=confpy.api.StringOption(
-            description="The queue to send/read from.",
-        ),
-    ),
-)
-
-
-def amqp_driver(config):
-    """Driver interface for the AmqpTransport."""
-    return AmqpTransport(
-        host=config.amqp.host,
-        username=config.amqp.username,
-        password=config.amqp.password,
-        queue=config.amqp.queue,
-    )

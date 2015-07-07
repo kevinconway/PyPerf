@@ -67,18 +67,3 @@ class AvgMemoryProfiler(BaseMemoryProfiler):
     def aggreagate(cls, results):
         """Get the average of the results."""
         return sum(results) / len(results)
-
-
-def memory_max_driver(config):
-    """Driver interface for the MaxMemoryProfiler."""
-    return MaxMemoryProfiler()
-
-
-def memory_min_profiler(config):
-    """Driver interface for the MinMemoryProfiler."""
-    return MinMemoryProfiler()
-
-
-def memory_avg_profiler(config):
-    """Driver interface for the AvgMemoryProfiler."""
-    return AvgMemoryProfiler()

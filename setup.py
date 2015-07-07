@@ -34,15 +34,6 @@ setup(
             "profile_response = pyperf.messages:ProfileResponse",
             "profile_failure = pyperf.messages:ProfileFailure",
         ],
-        "pyperf_transports": [
-            "amqp = pyperf.transports.amqp:amqp_driver",
-        ],
-        "pyperf_profilers": [
-            "runtime = pyperf.profilers.runtime:runtime_profiler_driver",
-            "memory_max = pyperf.profilers.memory:memory_max_driver",
-            "memory_min = pyperf.profilers.memory:memory_min_driver",
-            "memory_avg = pyperf.profilers.memory:memory_avg_driver",
-        ],
     },
     include_package_data=True,
     zip_safe=False,
